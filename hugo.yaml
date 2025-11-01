@@ -1,0 +1,51 @@
+baseURL: https://blog.naoido.com/
+languageCode: ja
+defaultContentLanguage: ja
+title: 'なおブログ'
+theme: paper-mod
+
+rssLimit: 20
+canonifyURLs: true
+enableRobotsTXT: true
+
+outputs:
+  home: ['HTML', 'RSS', 'JSON']
+  page: ['HTML']
+  section: ['HTML', 'RSS']
+
+menu:
+  main:
+    - identifier: 'posts'
+      name: 'Posts'
+      url: '/posts/'
+      weight: 1
+    - identifier: 'search'
+      name: 'Search'
+      url: '/search/'
+      weight: 2
+
+params:
+  DateFormat: '2006/01/02'
+  showScrollToTop: true
+  showBreadcrumbs: true
+  ShowRssButtonInSectionTermList: true
+  homeInfoParams:
+    title: なおいどです
+    content: こんにちは。
+  socialIcons:
+    - name: 'X'
+      url: 'https://x.com/naoido'
+    - name: 'GitHub'
+      url: 'https://github.com/naoido'
+    - name: 'link'
+      url: 'https://naoido.com'
+    - name: 'rss'
+      url: '/index.xml'
+
+  profileMode:
+    enabled: false
+
+  cover:
+    hidden: true
+    hiddenInList: true
+    hiddenInSingle: true
