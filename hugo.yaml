@@ -49,3 +49,13 @@ params:
     hidden: true
     hiddenInList: true
     hiddenInSingle: true
+
+privacy:
+  x:
+    disable: false
+    enableDNT: false
+    simple: false
+
+services:
+  x:
+    disableInlineCSS: false

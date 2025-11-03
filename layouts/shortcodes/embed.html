@@ -1,0 +1,89 @@
+{{- $url := .Get 0 -}}
+{{- $remoteResource := resources.GetRemote $url -}}
+
+{{- $ogTitle := "" -}}
+{{- $ogDescription := "" -}}
+{{- $ogImage := "" -}}
+{{- $ogUrl := $url -}}
+{{- $ogSiteName := "" -}}
+
+{{- if $remoteResource -}}
+  {{- $html := $remoteResource.Content -}}
+
+  {{- $titleMatches := findRE `<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']*)["'][^>]*>` $html 1 -}}
+  {{- if not $titleMatches -}}
+    {{- $titleMatches = findRE `<meta[^>]*content=["']([^"']*)["'][^>]*property=["']og:title["'][^>]*>` $html 1 -}}
+  {{- end -}}
+  {{- if $titleMatches -}}
+    {{- $ogTitle = index (findRE `content=["']([^"']*)["']` (index $titleMatches 0)) 0 -}}
+    {{- $ogTitle = replaceRE `content=["']([^"']*)["']` "$1" $ogTitle -}}
+  {{- end -}}
+  {{- $descMatches := findRE `<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']*)["'][^>]*>` $html 1 -}}
+  {{- if not $descMatches -}}
+    {{- $descMatches = findRE `<meta[^>]*content=["']([^"']*)["'][^>]*property=["']og:description["'][^>]*>` $html 1 -}}
+  {{- end -}}
+  {{- if $descMatches -}}
+    {{- $ogDescription = index (findRE `content=["']([^"']*)["']` (index $descMatches 0)) 0 -}}
+    {{- $ogDescription = replaceRE `content=["']([^"']*)["']` "$1" $ogDescription -}}
+  {{- end -}}
+  {{- $imageMatches := findRE `<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']*)["'][^>]*>` $html 1 -}}
+  {{- if not $imageMatches -}}
+    {{- $imageMatches = findRE `<meta[^>]*content=["']([^"']*)["'][^>]*property=["']og:image["'][^>]*>` $html 1 -}}
+  {{- end -}}
+  {{- if $imageMatches -}}
+    {{- $ogImage = index (findRE `content=["']([^"']*)["']` (index $imageMatches 0)) 0 -}}
+    {{- $ogImage = replaceRE `content=["']([^"']*)["']` "$1" $ogImage -}}
+  {{- end -}}
+  {{- $siteMatches := findRE `<meta[^>]*property=["']og:site_name["'][^>]*content=["']([^"']*)["'][^>]*>` $html 1 -}}
+  {{- if not $siteMatches -}}
+    {{- $siteMatches = findRE `<meta[^>]*content=["']([^"']*)["'][^>]*property=["']og:site_name["'][^>]*>` $html 1 -}}
+  {{- end -}}
+  {{- if $siteMatches -}}
+    {{- $ogSiteName = index (findRE `content=["']([^"']*)["']` (index $siteMatches 0)) 0 -}}
+    {{- $ogSiteName = replaceRE `content=["']([^"']*)["']` "$1" $ogSiteName -}}
+  {{- end -}}
+  {{- if not $ogTitle -}}
+    {{- $titleTagMatches := findRE `<title[^>]*>([^<]*)</title>` $html 1 -}}
+    {{- if $titleTagMatches -}}
+      {{- $ogTitle = replaceRE `<title[^>]*>([^<]*)</title>` "$1" (index $titleTagMatches 0) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if or $ogTitle $ogDescription $ogImage -}}
+<a href="{{ $ogUrl }}" target="_blank" rel="noopener noreferrer" class="embed-link">
+  <div class="embed-card">
+    {{- if $ogImage -}}
+    <div class="embed-image">
+      <img src="{{ $ogImage }}" alt="{{ $ogTitle }}">
+    </div>
+    {{- end -}}
+    <div class="embed-content">
+      <div>
+        {{- if $ogTitle -}}
+        <h3 class="embed-title">
+          {{ $ogTitle }}
+        </h3>
+        {{- end -}}
+        {{- if $ogDescription -}}
+        <p class="embed-description">
+          {{ $ogDescription }}
+        </p>
+        {{- end -}}
+      </div>
+      {{- if or $ogSiteName $ogUrl -}}
+      <div class="embed-site">
+        {{- if $ogSiteName -}}
+          {{ $ogSiteName }}
+        {{- else -}}
+          {{- $domain := replaceRE `^https?://([^/]+).*$` "$1" $ogUrl -}}
+          {{ $domain }}
+        {{- end -}}
+      </div>
+      {{- end -}}
+    </div>
+  </div>
+</a>
+{{- else -}}
+  <p><a href="{{ $ogUrl }}" target="_blank" rel="noopener noreferrer">{{ $ogUrl }}</a></p>
+{{- end -}}
