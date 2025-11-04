@@ -29,6 +29,8 @@ params:
   showScrollToTop: true
   showBreadcrumbs: true
   ShowRssButtonInSectionTermList: true
+  assets:
+    disableFingerprinting: false
   homeInfoParams:
     title: なおいどです
     content: こんにちは。
@@ -49,6 +51,13 @@ params:
     hidden: true
     hiddenInList: true
     hiddenInSingle: true
+
+markup:
+  highlight:
+    noClasses: false
+  goldmark:
+    renderer:
+      unsafe: true
 
 privacy:
   x:
